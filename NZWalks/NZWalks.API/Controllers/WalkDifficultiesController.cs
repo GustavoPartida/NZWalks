@@ -46,6 +46,8 @@ namespace NZWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddWalkDifficutyAsync(AddWalkDifficultyRequest addWalkDifficultyRequest)
         {
+            if (!ValidateAddWalkDifficutyAsync(addWalkDifficultyRequest)) return BadRequest(ModelState);
+
             var walkDifficultyDomain = new Models.Domain.WalkDifficulty
             {
                 Code = addWalkDifficultyRequest.Code
@@ -60,6 +62,8 @@ namespace NZWalks.API.Controllers
         [Route("{id:guid}")]
         public async Task<IActionResult> UpdateWalkDifficultyAsync([FromRoute] Guid id, [FromBody] Models.DTO.UpdateWalkDifficultyRequest updateWalkDifficultyRequest)
         {
+            if (!ValidateUpdateWalkDifficultyAsync(updateWalkDifficultyRequest)) return BadRequest(ModelState);
+
             var walkDifficultyDomain = new Models.Domain.WalkDifficulty
             {
                 Code = updateWalkDifficultyRequest.Code,
@@ -90,5 +94,25 @@ namespace NZWalks.API.Controllers
             return Ok(walkDifficultyDTO);
 
         }
+
+        #region Private methods
+
+        private bool ValidateAddWalkDifficutyAsync(AddWalkDifficultyRequest addWalkDifficultyRequest )
+        {
+            if (addWalkDifficultyRequest == null) ModelState.AddModelError(nameof(addWalkDifficultyRequest), $"add Region Data is required");
+            if (string.IsNullOrWhiteSpace(addWalkDifficultyRequest.Code)) ModelState.AddModelError(nameof(addWalkDifficultyRequest.Code), $"{nameof(addWalkDifficultyRequest.Code)} cannot be mull or empty or white space.");
+            if (ModelState.ErrorCount > 0) return false;
+            return true;
+        }
+
+        private bool ValidateUpdateWalkDifficultyAsync(UpdateWalkDifficultyRequest updateWalkDifficultyRequest )
+        {
+            if (updateWalkDifficultyRequest == null) ModelState.AddModelError(nameof(updateWalkDifficultyRequest), $"add Region Data is required");
+            if (string.IsNullOrWhiteSpace(updateWalkDifficultyRequest.Code)) ModelState.AddModelError(nameof(updateWalkDifficultyRequest.Code), $"{nameof(updateWalkDifficultyRequest.Code)} cannot be mull or empty or white space.");
+            if (ModelState.ErrorCount > 0) return false;
+            return true;
+        }
+
+        #endregion
     }
 }
